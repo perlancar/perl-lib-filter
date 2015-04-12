@@ -47,12 +47,47 @@ sub import {
     $opts{allow_core} //= 1;
     $opts{allow_noncore} //= 1;
 
+    if ($opts{extra_inc}) {
+        unshift @INC, split(/:/, $opts{extra_inc});
+    }
+
     state $orig_inc = [@INC];
     state $hook;
 
     my $core_inc = [@Config{qw(privlibexp archlibexp)}];
     my $noncore_inc = [grep {$_ ne $Config{privlibexp} &&
                                  $_ ne $Config{archlibexp}} @$orig_inc];
+    my %allow;
+    if ($opts{allow}) {
+        for (split /\s*;\s*/, $opts{allow}) {
+            $allow{$_} = "allow";
+        }
+    }
+    if ($opts{allow_list}) {
+        open my($fh), "<", $opts{allow_list}
+            or die "Can't open allow_list file '$opts{allow_list}': $!";
+        while (my $line = <$fh>) {
+            $line =~ s/^\s+//;
+            $line =~ /^(\w+(?:::\w+)*)/ or next;
+            $allow{$1} //= "allow_list";
+        }
+    }
+
+    my %disallow;
+    if ($opts{disallow}) {
+        for (split /\s*;\s*/, $opts{disallow}) {
+            $disallow{$_} = "disallow";
+        }
+    }
+    if ($opts{disallow_list}) {
+        open my($fh), "<", $opts{disallow_list}
+            or die "Can't open disallow_list file '$opts{disallow_list}': $!";
+        while (my $line = <$fh>) {
+            $line =~ s/^\s+//;
+            $line =~ /^(\w+(?:::\w+)*)/ or next;
+            $disallow{$1} //= "disallow_list";
+        }
+    }
 
     $hook //= sub {
         my ($self, $file) = @_;
@@ -60,6 +95,24 @@ sub import {
         my $path;
       FILTER:
         {
+            my $mod = $file; $mod =~ s/\.pm$//; $mod =~ s!/!::!g;
+            if ($opts{disallow_re} && $mod =~ /$opts{disallow_re}/) {
+                die "Module '$mod' is disallowed (disallow_re)";
+            }
+            if ($disallow{$mod}) {
+                die "Module '$mod' is disallowed ($disallow{$mod})";
+            }
+            if ($opts{allow_re} && $mod =~ /$opts{allow_re}/) {
+                $path = module_path($file, $orig_inc);
+                last FILTER if $path;
+                die "Module '$mod' is allowed (allow_re) but can't locate $file in \@INC (\@INC contains: ".join(" ", @INC);
+            }
+            if ($allow{$mod}) {
+                $path = module_path($file, $orig_inc);
+                last FILTER if $path;
+                die "Module '$mod' is allowed ($allow{$mod}) but can't locate $file in \@INC (\@INC contains: ".join(" ", @INC);
+            }
+
             my $inc;
             if ($opts{allow_noncore} && $opts{allow_core}) {
                 $inc = $orig_inc;
@@ -97,6 +150,7 @@ sub import {
 }
 
 1;
+# ABSTRACT: Only allow some specified modules to be locateable/loadable
 
 =for Pod::Coverage .+
 
@@ -127,13 +181,14 @@ This pragma installs a hook in C<@INC> to allow only some modules from being
 found/loadable. This pragma is useful for testing, e.g. fatpacked script and is
 more flexible than L<lib::none> and L<lib::core::only>.
 
-lib::none is absolutely ruthless: your fatpacked script must fatpack everything
-(including things like L<strict>, L<warnings>) as it empties C<@INC> and remove
-the ability of perl to load any module.
+lib::none is absolutely ruthless: your fatpacked script must fatpack all modules
+(including things like L<strict>, L<warnings>) as lib::none empties C<@INC> and
+removes perl's ability to load any more modules.
 
 lib::core::only only puts core paths in C<@INC> so your fatpacked script must
 contain all non-core modules. But this is also too restrictive in some cases
-because we cannot fatpack XS modules.
+because we cannot fatpack XS modules and want to let the script load those from
+filesystem.
 
 lib::filter makes it possible for you to, e.g. only allow core modules, plus
 some other modules (like some XS modules).
@@ -154,13 +209,28 @@ Known options:
 
 Add a semicolon-separated list of modules to allow.
 
+=item * disallow => str
+
+Add a semicolon-separated list of modules to disallow. This will take precedence
+over any allowed list.
+
 =item * allow_re => str
 
 Allow modules matching regex pattern.
 
+=item * disallow_re => str
+
+Disallow modules matching regex pattern. This will take precedence over any
+allowed list.
+
 =item * allow_list => filename
 
 Read a file containing list of modules to allow (one module per line).
+
+=item * disallow_list => filename
+
+Read a file containing list of modules to disallow (one module per line). This
+wlll take precedence over any allowed list.
 
 =item * extra_inc => str
 
