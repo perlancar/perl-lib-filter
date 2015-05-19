@@ -165,14 +165,21 @@ sub import {
  # allow core modules plus some more modules
  % perl -Mlib::filter=allow_noncore,0,allow,'List::MoreUtils;List::MoreUtils::PP;List::MoreUtils::XS' yourscript.pl
 
- # allow additional modules by pattern
+ # allow core modules plus additional modules by pattern
  % perl -Mlib::filter=allow_noncore,0,allow_re,'^DateTime::.*' yourscript.pl
 
- # allow additional modules listed in a file
- % perl -Mlib::filter=allow_noncore,0,allow_list,'^DateTime::.*' yourscript.pl
+ # allow core modules plus additional modules listed in a file
+ % perl -Mlib::filter=allow_noncore,0,allow_list,'/tmp/allow.txt' yourscript.pl
 
- # allow additional modules found in some dirs
+ # allow core modules plus additional modules found in some dirs
  % perl -Mlib::filter=allow_noncore,0,extra_path,'.:proj/lib' yourscript.pl
+
+ # disallow some modules (for testing/simulating the non-availability of a
+ # module, pretending that a module does not exist)
+ % perl -Mlib::filter=disallow,'YAML::XS,JSON::XS' yourscript.pl
+
+ # idem, but the list of disallowed modules are retrieved from a file
+ % perl -Mlib::filter=disallow_list,/tmp/disallow.txt yourscript.pl
 
 
 =head1 DESCRIPTION
