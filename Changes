@@ -1,5 +1,12 @@
 Revision history for lib-filter
 
+0.03    2015-05-22 (PERLANCAR)
+
+        - Add unimport().
+
+        - Add minimal tests.
+
+
 0.02    2015-05-19 (PERLANCAR)
 
 	- No functional changes.
