@@ -39,6 +39,9 @@ sub _open_handle {
     $fh;
 }
 
+my $hook;
+my $orig_inc;
+
 sub import {
     use experimental 'smartmatch';
 
@@ -51,8 +54,7 @@ sub import {
         unshift @INC, split(/:/, $opts{extra_inc});
     }
 
-    state $orig_inc = [@INC];
-    state $hook;
+    $orig_inc //= [@INC];
 
     my $core_inc = [@Config{qw(privlibexp archlibexp)}];
     my $noncore_inc = [grep {$_ ne $Config{privlibexp} &&
@@ -89,7 +91,7 @@ sub import {
         }
     }
 
-    $hook //= sub {
+    $hook = sub {
         my ($self, $file) = @_;
 
         my $path;
@@ -147,6 +149,11 @@ sub import {
     );
     #use DD; dd $orig_inc;
     #use DD; dd \@INC;
+}
+
+sub unimport {
+    return unless $hook;
+    @INC = grep { "$_" ne "$hook" } @INC;
 }
 
 1;
