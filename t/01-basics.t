@@ -11,8 +11,8 @@ require lib::filter;
 
 subtest "disallow" => sub {
     lib::filter->import(disallow => 'IPC::Cmd;List::Util');
-    dies_ok  { require IPC::Cmd };
-    dies_ok  { require List::Util };
+    dies_ok  { local %INC = %INC; delete $INC{'IPC/Cmd.pm'}; require IPC::Cmd };
+    dies_ok  { local %INC = %INC; delete $INC{'List/Util.pm'}; require List::Util };
     lives_ok { require IO::Socket };
     lib::filter->unimport;
 };
