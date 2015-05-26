@@ -1,5 +1,15 @@
 Revision history for lib-filter
 
+0.04    2015-05-26 (PERLANCAR)
+
+        - Add lib::allow, lib::disallow.
+
+        - Tweak POD & examples.
+
+        - Reduce use of modules (we're now down to Config,strict,warnings; no
+          more experimental).
+
+
 0.03    2015-05-22 (PERLANCAR)
 
         - Add unimport().
