@@ -3,7 +3,7 @@ package lib::filter;
 # DATE
 # VERSION
 
-use 5.010001;
+#use 5.010001;
 use strict;
 use warnings;
 use Config;
@@ -43,18 +43,16 @@ my $hook;
 my $orig_inc;
 
 sub import {
-    use experimental 'smartmatch';
-
     my ($class, %opts) = @_;
 
-    $opts{allow_core} //= 1;
-    $opts{allow_noncore} //= 1;
+    $opts{allow_core}    = 1 if !defined($opts{allow_core});
+    $opts{allow_noncore} = 1 if !defined($opts{allow_noncore});
 
     if ($opts{extra_inc}) {
         unshift @INC, split(/:/, $opts{extra_inc});
     }
 
-    $orig_inc //= [@INC];
+    $orig_inc ||= [@INC];
 
     my $core_inc = [@Config{qw(privlibexp archlibexp)}];
     my $noncore_inc = [grep {$_ ne $Config{privlibexp} &&
@@ -71,7 +69,7 @@ sub import {
         while (my $line = <$fh>) {
             $line =~ s/^\s+//;
             $line =~ /^(\w+(?:::\w+)*)/ or next;
-            $allow{$1} //= "allow_list";
+            $allow{$1} ||= "allow_list";
         }
     }
 
@@ -87,7 +85,7 @@ sub import {
         while (my $line = <$fh>) {
             $line =~ s/^\s+//;
             $line =~ /^(\w+(?:::\w+)*)/ or next;
-            $disallow{$1} //= "disallow_list";
+            $disallow{$1} ||= "disallow_list";
         }
     }
 
@@ -136,11 +134,12 @@ sub import {
     @INC = (
         $hook,
         grep {
-            if ("$_" eq "$hook") {
+            my $mod = $_;
+            if ("$mod" eq "$hook") {
                 0;
-            } elsif ($opts{allow_core} && $_ ~~ @$core_inc) {
+            } elsif ($opts{allow_core} && grep {$mod eq $_} @$core_inc) {
                 1;
-            } elsif ($opts{allow_noncore} && $_ ~~ @$noncore_inc) {
+            } elsif ($opts{allow_noncore} && grep {$mod eq $_} @$noncore_inc) {
                 1;
             } else {
                 0;
@@ -168,6 +167,9 @@ sub unimport {
 
  # equivalent to -Mlib::core::only
  % perl -Mlib::filter=allow_noncore,0 yourscript.pl
+
+ # only allow a specific set of modules
+ % perl -Mlib::filter=allow_core,0,allow_noncore,0,allow,'strict;warnings;List::Util' yourscript.pl
 
  # allow core modules plus some more modules
  % perl -Mlib::filter=allow_noncore,0,allow,'List::MoreUtils;List::MoreUtils::PP;List::MoreUtils::XS' yourscript.pl
@@ -215,42 +217,52 @@ Known options:
 
 =over
 
-=item * allow_core => bool (default: 1)
+=item * disallow => str
 
-=item * allow_noncore => bool (default: 1)
+Add a semicolon-separated list of modules to disallow.
+
+=item * disallow_re => str
+
+Add modules matching regex pattern to disallow.
+
+=item * disallow_list => filename
+
+Read a file containing list of modules to disallow (one module per line).
 
 =item * allow => str
 
-Add a semicolon-separated list of modules to allow.
-
-=item * disallow => str
-
-Add a semicolon-separated list of modules to disallow. This will take precedence
-over any allowed list.
+Add a semicolon-separated list of module names to allow.
 
 =item * allow_re => str
 
 Allow modules matching regex pattern.
 
-=item * disallow_re => str
-
-Disallow modules matching regex pattern. This will take precedence over any
-allowed list.
-
 =item * allow_list => filename
 
 Read a file containing list of modules to allow (one module per line).
 
-=item * disallow_list => filename
+=item * allow_core => bool (default: 1)
 
-Read a file containing list of modules to disallow (one module per line). This
-wlll take precedence over any allowed list.
+Allow core modules.
+
+=item * allow_noncore => bool (default: 1)
+
+Allow non-core modules.
 
 =item * extra_inc => str
 
 Add additional path to search modules in. String must be colon-separated paths.
 
 =back
+
+How a module is filtered: first, it is checked against the
+disallow/disallow_re/disallow_list. If it matches one of those options then the
+module is disallowed. Otherwise it is checked against the
+allow/allow_re/allow_list. If it matches one of those options and the module's
+path is found in the directories in @INC, then the module is allowed. Finally,
+allow_core/allow_noncore is checked. When allow_core is set to false, core
+directories are excluded. Likewise, when allow_noncore is set to false, non-core
+directories are excluded.
 
 
 =head1 SEE ALSO
