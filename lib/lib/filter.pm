@@ -169,7 +169,7 @@ sub unimport {
  % perl -Mlib::filter=allow_noncore,0 yourscript.pl
 
  # only allow a specific set of modules
- % perl -Mlib::filter=allow_core,0,allow_noncore,0,allow,'strict;warnings;List::Util' yourscript.pl
+ % perl -Mlib::filter=allow_core,0,allow_noncore,0,allow,'List::Util' yourscript.pl
 
  # allow core modules plus some more modules
  % perl -Mlib::filter=allow_noncore,0,allow,'List::MoreUtils;List::MoreUtils::PP;List::MoreUtils::XS' yourscript.pl
