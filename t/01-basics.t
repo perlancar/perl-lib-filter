@@ -7,13 +7,29 @@ use warnings;
 use Test::Exception;
 use Test::More 0.98;
 
+sub test_require_ok {
+    my $mod = shift;
+    my $mod_pm = do { local $_ = $mod; s!::!/!g; "$_.pm" };
+    local %INC = %INC;
+    delete $INC{$mod_pm};
+    lives_ok { require $mod_pm };
+}
+
+sub test_require_nok {
+    my $mod = shift;
+    my $mod_pm = do { local $_ = $mod; s!::!/!g; "$_.pm" };
+    local %INC = %INC;
+    delete $INC{$mod_pm};
+    dies_ok { require $mod_pm };
+}
+
 require lib::filter;
 
 subtest "disallow" => sub {
     lib::filter->import(disallow => 'IPC::Cmd;List::Util');
-    dies_ok  { local %INC = %INC; delete $INC{'IPC/Cmd.pm'}; require IPC::Cmd };
-    dies_ok  { local %INC = %INC; delete $INC{'List/Util.pm'}; require List::Util };
-    lives_ok { require IO::Socket };
+    test_require_nok "IPC::Cmd";
+    test_require_nok "List::Util";
+    test_require_ok  "IO::Socket";
     lib::filter->unimport;
 };
 
