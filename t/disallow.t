@@ -12,7 +12,7 @@ use lib::disallow ();
 subtest "basics" => sub {
     lib::disallow->import('List::Util');
     test_require_nok "List::Util";
-    test_require_ok "strict";
+    test_require_ok  "strict";
     lib::disallow->unimport;
 };
 

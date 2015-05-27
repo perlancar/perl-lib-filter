@@ -36,16 +36,16 @@ subtest "disallow_list" => sub {
 
 subtest "allow" => sub {
     lib::filter->import(allow_core=>0, allow_noncore=>0, allow => 'Benchmark;Scalar::Util');
-    test_require_ok "Scalar::Util";
-    test_require_ok "Benchmark";
+    test_require_ok  "Scalar::Util";
+    test_require_ok  "Benchmark";
     test_require_nok "IO::Socket";
     lib::filter->unimport;
 };
 
 subtest "allow_re" => sub {
     lib::filter->import(allow_core=>0, allow_noncore=>0, allow_re => 'Bench|Scalar');
-    test_require_ok "Scalar::Util";
-    test_require_ok "Benchmark";
+    test_require_ok  "Scalar::Util";
+    test_require_ok  "Benchmark";
     test_require_nok "IO::Socket";
     lib::filter->unimport;
 };
@@ -55,8 +55,8 @@ subtest "allow_list" => sub {
     print $fh "Benchmark\nScalar::Util\n";
     close $fh;
     lib::filter->import(allow_core=>0, allow_noncore=>0, allow_list => $filename);
-    test_require_ok "Scalar::Util";
-    test_require_ok "Benchmark";
+    test_require_ok  "Scalar::Util";
+    test_require_ok  "Benchmark";
     test_require_nok "IO::Socket";
     lib::filter->unimport;
 };

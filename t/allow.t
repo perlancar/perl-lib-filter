@@ -11,7 +11,7 @@ use lib::allow ();
 
 subtest "basics" => sub {
     lib::allow->import('List::Util');
-    test_require_ok "List::Util";
+    test_require_ok  "List::Util";
     test_require_nok "strict";
     lib::allow->unimport;
 };
