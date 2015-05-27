@@ -4,35 +4,10 @@ use 5.010;
 use strict;
 use warnings;
 
-use File::Temp qw(tempfile);
-use Test::Exception;
-use Test::More 0.98;
 use FindBin '$Bin';
 use lib "$Bin/lib";
+BEGIN { require "testlib.pl" };
 use lib::filter ();
-
-# Test::Builder will load these modules, we preload them here to avoid false
-# positives/negatives
-{
-    require overload;
-    require List::Util;
-}
-
-sub test_require_ok {
-    my $mod = shift;
-    my $mod_pm = do { local $_ = $mod; s!::!/!g; "$_.pm" };
-    local %INC = %INC;
-    delete $INC{$mod_pm};
-    lives_ok { require $mod_pm };
-}
-
-sub test_require_nok {
-    my $mod = shift;
-    my $mod_pm = do { local $_ = $mod; s!::!/!g; "$_.pm" };
-    local %INC = %INC;
-    delete $INC{$mod_pm};
-    dies_ok { require $mod_pm };
-}
 
 subtest "disallow" => sub {
     lib::filter->import(disallow => 'IPC::Cmd;List::Util');
