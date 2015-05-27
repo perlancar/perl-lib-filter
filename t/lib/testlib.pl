@@ -1,13 +1,13 @@
-use File::Temp qw(tempfile);
-use Test::Exception;
-use Test::More 0.98;
-
 # Test::Builder will load these modules, we preload them here to avoid false
 # positives/negatives
 {
     require overload;
     require List::Util;
 }
+
+use File::Temp qw(tempfile);
+use Test::Exception;
+use Test::More 0.98;
 
 sub test_require_ok {
     my $mod = shift;
