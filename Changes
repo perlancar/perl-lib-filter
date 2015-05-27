@@ -1,5 +1,14 @@
 Revision history for lib-filter
 
+0.05    2015-05-27 (PERLANCAR)
+
+        - No functional changes.
+
+        - Fix tests [GH #2].
+
+        - Add more tests.
+
+
 0.04    2015-05-26 (PERLANCAR)
 
         - Add lib::allow, lib::disallow.
