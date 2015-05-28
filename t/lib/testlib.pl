@@ -1,6 +1,6 @@
 # Test::Builder will load these modules, we preload them here to avoid false
 # positives/negatives
-{
+BEGIN {
     require overload;
     require List::Util;
 }
