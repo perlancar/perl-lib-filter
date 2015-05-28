@@ -194,7 +194,18 @@ sub unimport {
 =head1 DESCRIPTION
 
 This pragma installs a hook in C<@INC> to allow only some modules from being
-found/loadable. This pragma is useful for testing, e.g. fatpacked script and is
+found/loadable. This pragma is useful for testing, e.g.:
+
+=over
+
+=item * test whether a fatpacked script really can run with just core modules;
+
+=item * test that a program/module can function when an optional (recommends/suggests) dependency is absent;
+
+=item * test that a test script can function (i.e. skip tests) when an optional dependency is absent;
+
+=back
+
 more flexible than L<lib::none> and L<lib::core::only>.
 
 lib::none is absolutely ruthless: your fatpacked script must fatpack all modules
