@@ -282,4 +282,6 @@ L<lib::none>
 
 L<lib::core::only>
 
+L<Devel::Hide>
+
 =cut
