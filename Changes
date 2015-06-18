@@ -1,5 +1,13 @@
 Revision history for lib-filter
 
+0.07    2015-06-18 (PERLANCAR)
+
+        - No functional changes.
+
+        - [build] Rebuild with updated/fixed stacktrace printer from
+          Code::Embeddable.
+
+
 0.06    2015-06-18 (PERLANCAR)
 
         - Preload Test::Builder's prerequisites before loading Test::* (thanks
