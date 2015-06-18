@@ -1,9 +1,11 @@
 my %OLD_SIG;
 BEGIN {
-    # Test::Builder will load these modules, we preload them here to avoid false
-    # positives/negatives
+    # Test::More and/or Test::Builder delay-load these modules. We preload them
+    # here to avoid false positives/negatives, because during testing we'll
+    # sometimes forbid modules from being found/loadable
     require overload;
     require List::Util;
+    require Scalar::Util;
 }
 
 use File::Temp qw(tempfile);
