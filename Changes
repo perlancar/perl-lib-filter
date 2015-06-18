@@ -1,5 +1,15 @@
 Revision history for lib-filter
 
+0.06    2015-06-18 (PERLANCAR)
+
+        - Preload Test::Builder's prerequisites before loading Test::* (thanks
+          Sinan Ünür).
+
+        - Install a simple stacktrace printer in the tests, to help debug problems.
+
+        - Doc tweaks.
+
+
 0.05    2015-05-27 (PERLANCAR)
 
         - No functional changes.
