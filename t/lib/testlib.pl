@@ -4,25 +4,6 @@ BEGIN {
     # positives/negatives
     require overload;
     require List::Util;
-
-    # a very simple, no-modules-required version of Carp::Always/Devel::Confess,
-    # to help debug problems when getting test failure reports
-    @OLD_SIG{qw/__DIE__ __WARN__/} = @SIG{qw/__DIE__ __WARN__/};
-    my $longmess = sub {
-        my $i = 0;
-        while (my @caller = caller($i)) {
-            if ($i == 0) { print $_[0] }
-            print " $caller[3] called" if $caller[3];
-            print " at $caller[1] line $caller[2]\n";
-            $i++;
-        }
-    };
-    $SIG{__DIE__}  = sub { die &$longmess };
-    $SIG{__WARN__} = sub { warn &$longmess };
-}
-
-END {
-    @SIG{qw/__DIE__ __WARN__/} = @OLD_SIG{qw/__DIE__ __WARN__/};
 }
 
 use File::Temp qw(tempfile);
