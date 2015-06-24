@@ -9,11 +9,11 @@ use lib "$Bin/lib";
 BEGIN { require "testlib.pl" };
 use lib::disallow ();
 
-subtest "basics" => sub {
-    lib::disallow->import('List::Util');
-    test_require_nok "List::Util";
-    test_require_ok  "strict";
-    lib::disallow->unimport;
-};
+test_lib_disallow(
+    name => "basics",
+    args => ['Exporter'],
+    require_nok => ["Exporter"],
+    require_ok => ["utf8"],
+);
 
 done_testing;

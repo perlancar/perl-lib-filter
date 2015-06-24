@@ -7,82 +7,90 @@ use warnings;
 use FindBin '$Bin';
 use lib "$Bin/lib";
 BEGIN { require "testlib.pl" };
-use lib::filter ();
 
-subtest "disallow" => sub {
-    lib::filter->import(disallow => 'IPC::Cmd;List::Util');
-    test_require_nok "IPC::Cmd";
-    test_require_nok "List::Util";
-    test_require_ok  "IO::Socket";
-    lib::filter->unimport;
-};
+test_lib_filter(
+    name => 'disallow',
+    args => ["disallow", "IPC::Cmd;List::Util"],
+    require_nok => ["IPC::Cmd", "List::Util"],
+    require_ok  => ["IO::Socket"], # core
+);
 
-subtest "disallow_re" => sub {
-    lib::filter->import(disallow_re => 'File::.+');
-    test_require_nok "File::Copy";
-    test_require_nok "File::Find";
-    lib::filter->unimport;
-};
+test_lib_filter(
+    name => 'disallow_re',
+    args => ['disallow_re', 'File::.+'],
+    require_nok => ["File::Copy", "File::Find"], # core
+    require_ok => ["IO::Socket"], # core
+);
 
-subtest "disallow_list" => sub {
+{
     my ($fh, $filename) = tempfile();
     print $fh "File::Copy\nFile::Find\n";
     close $fh;
-    lib::filter->import(disallow_list => $filename);
-    test_require_nok "File::Find";
-    test_require_nok "File::Copy";
-    lib::filter->unimport;
-};
 
-subtest "allow" => sub {
-    lib::filter->import(allow_core=>0, allow_noncore=>0, allow => 'Benchmark;Scalar::Util');
-    test_require_ok  "Scalar::Util";
-    test_require_ok  "Benchmark";
-    test_require_nok "IO::Socket";
-    lib::filter->unimport;
-};
+    test_lib_filter(
+        name => 'disallow_list',
+        args => ['disallow_list' => $filename],
+        require_nok => ["File::Find", "File::Copy"], # core
+        require_ok => ["IO::Socket"], # core
+    );
+}
 
-subtest "allow_re" => sub {
-    lib::filter->import(allow_core=>0, allow_noncore=>0, allow_re => 'Bench|Scalar');
-    test_require_ok  "Scalar::Util";
-    test_require_ok  "Benchmark";
-    test_require_nok "IO::Socket";
-    lib::filter->unimport;
-};
+test_lib_filter(
+    name => 'allow',
+    # let's allow Scalar::Util and the modules it uses
+    args => [allow_core=>0, allow_noncore=>0, allow=>'Scalar::Util;Exporter;List::Util;XSLoader'],
+    require_ok => ["Scalar::Util"],
+    require_nok => ["IO::Socket"], # core
+);
 
-subtest "allow_list" => sub {
+test_lib_filter(
+    name => 'allow_re',
+    # let's allow Scalar::Util and the modules it uses, via regex
+    args => [allow_core=>0, allow_noncore=>0, allow_re => '::Util|Exporter|XS'],
+    require_ok => ["Scalar::Util"],
+    require_nok => ["IO::Socket"], # core
+);
+
+{
     my ($fh, $filename) = tempfile();
-    print $fh "Benchmark\nScalar::Util\n";
+    print $fh "Scalar::Util\nExporter\nList::Util\nXSLoader\n";
     close $fh;
-    lib::filter->import(allow_core=>0, allow_noncore=>0, allow_list => $filename);
-    test_require_ok  "Scalar::Util";
-    test_require_ok  "Benchmark";
-    test_require_nok "IO::Socket";
-    lib::filter->unimport;
-};
 
-subtest "allow_core=0" => sub {
-    lib::filter->import(allow_core=>0);
-    # TODO we need to select modules which are only available in core dir
-    # test_require_nok "Scalar::Util";
-    test_require_ok  "Foo";
-    lib::filter->unimport;
-};
+    test_lib_filter(
+        name => 'allow_list',
+        args => [allow_core=>0, allow_noncore=>0, allow_list=>$filename],
+        require_ok => ["Scalar::Util"],
+        require_nok => ["IO::Socket"], # core
+    );
+}
 
-subtest "allow_noncore=0" => sub {
-    lib::filter->import(allow_noncore=>0);
-    test_require_ok  "Scalar::Util";
-    test_require_nok "Foo";
-    lib::filter->unimport;
-};
+test_lib_filter(
+    name => "allow_core=0",
+    extra_libs => ["$Bin/lib"],
+    args => [allow_core=>0],
 
-subtest "ordering" => sub {
-    # disallow before allow
-    lib::filter->import(allow => 'Benchmark', disallow=>'Benchmark');
-    test_require_nok "Benchmark";
-    lib::filter->unimport;
+    # XXX we need to select modules which are only available in core dir and not
+    # in non-core dir
 
-    # XXX more tests
-};
+    # require_nok => ["Scalar::Util"],
+
+    require_ok => ["Foo"],
+);
+
+test_lib_filter(
+    name => "allow_noncore=0",
+    args => [allow_noncore=>0],
+    extra_libs => ["$Bin/lib"],
+    require_ok => ["Scalar::Util"],
+    require_nok => ["Foo"],
+);
+
+test_lib_filter(
+    name => "ordering (disallow before allow)",
+    args => [allow => 'Exporter', disallow=>'Exporter'],
+    require_nok => ["Exporter"],
+);
+
+# XXX more ordering tests
 
 done_testing;
