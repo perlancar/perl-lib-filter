@@ -37,29 +37,27 @@ test_lib_filter(
 
 test_lib_filter(
     name => 'allow',
-    # let's allow Scalar::Util and the modules it uses
-    args => [allow_core=>0, allow_noncore=>0, allow=>'Scalar::Util;Exporter;List::Util;XSLoader'],
-    require_ok => ["Scalar::Util"],
+    args => [allow_core=>0, allow_noncore=>0, allow=>'Exporter'],
+    require_ok => ["Exporter"],
     require_nok => ["IO::Socket"], # core
 );
 
 test_lib_filter(
     name => 'allow_re',
-    # let's allow Scalar::Util and the modules it uses, via regex
-    args => [allow_core=>0, allow_noncore=>0, allow_re => '::Util|Exporter|XS'],
-    require_ok => ["Scalar::Util"],
+    args => [allow_core=>0, allow_noncore=>0, allow_re => 'Exp.rter'],
+    require_ok => ["Exporter"],
     require_nok => ["IO::Socket"], # core
 );
 
 {
     my ($fh, $filename) = tempfile();
-    print $fh "Scalar::Util\nExporter\nList::Util\nXSLoader\n";
+    print $fh "Exporter\nutf8\n";
     close $fh;
 
     test_lib_filter(
         name => 'allow_list',
         args => [allow_core=>0, allow_noncore=>0, allow_list=>$filename],
-        require_ok => ["Scalar::Util"],
+        require_ok => ["Exporter", "utf8"],
         require_nok => ["IO::Socket"], # core
     );
 }
