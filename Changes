@@ -1,5 +1,10 @@
 Revision history for lib-filter
 
+0.10    2015-06-25 (PERLANCAR)
+
+        - Fix test failures.
+
+
 0.09    2015-06-24 (PERLANCAR)
 
         - Change tests to use external Perl interpreters instead of in-process,
