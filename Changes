@@ -1,5 +1,12 @@
 Revision history for lib-filter
 
+0.12    2015-06-26 (PERLANCAR)
+
+	- No functional changes.
+
+	- Allow running in perl 5.8.
+
+
 0.11    2015-06-26 (PERLANCAR)
 
 	- Use dummy modules for most testing [GH#4].
