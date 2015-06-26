@@ -11,7 +11,7 @@ use lib::allow ();
 test_lib_allow(
     name => "basics",
     args => ["Foo"],
-    extra_libs => ["$Bin/lib"],
+    extra_libs => ["$Bin/../lib", "$Bin/lib"],
     require_ok => ["Foo"],
     require_nok => ["Bar"],
 );

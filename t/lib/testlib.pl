@@ -7,15 +7,15 @@ sub _test_lib {
     my $which = shift;
     my %args = @_;
 
-    my $name = $args{name} // "args: " . join(" ", @{$args{args}});
+    my $name = $args{name} || "args: " . join(" ", @{$args{args}});
     subtest $name => sub {
         for my $ent (
-            (map {+{module=>$_, ok=>1}} @{$args{require_ok} // []}),
-            (map {+{module=>$_, ok=>0}} @{$args{require_nok} // []}),
+            (map {+{module=>$_, ok=>1}} @{$args{require_ok} || []}),
+            (map {+{module=>$_, ok=>0}} @{$args{require_nok} || []}),
         ) {
             my @system_args = (
                 $^X,
-                (map {"-I$_"} @{ $args{extra_libs} // []}),
+                (map {"-I$_"} @{ $args{extra_libs} || []}),
                 "-Mlib::$which". (@{$args{args}} ? "=".
                                       join(",",@{$args{args}}):""),
                 "-e",

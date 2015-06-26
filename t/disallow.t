@@ -11,7 +11,7 @@ use lib::disallow ();
 test_lib_disallow(
     name => "basics",
     args => ['Foo'],
-    extra_libs => ["$Bin/lib"],
+    extra_libs => ["$Bin/../lib", "$Bin/lib"],
     require_nok => ["Foo"],
     require_ok => ["Bar"],
 );
