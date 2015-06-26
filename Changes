@@ -1,5 +1,10 @@
 Revision history for lib-filter
 
+0.11    2015-06-26 (PERLANCAR)
+
+	- Use dummy modules for most testing [GH#4].
+
+
 0.10    2015-06-25 (PERLANCAR)
 
         - Fix test failures.
