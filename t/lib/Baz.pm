@@ -1,4 +1,4 @@
 # just an empty module for testing
-package Foo;
+package Baz;
 
 1;

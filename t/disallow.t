@@ -11,9 +11,10 @@ use lib::disallow ();
 
 test_lib_disallow(
     name => "basics",
-    args => ['Exporter'],
-    require_nok => ["Exporter"],
-    require_ok => ["utf8"],
+    args => ['Foo'],
+    extra_libs => ["$Bin/lib"],
+    require_nok => ["Foo"],
+    require_ok => ["Bar"],
 );
 
 done_testing;

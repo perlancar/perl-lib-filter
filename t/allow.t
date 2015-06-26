@@ -11,9 +11,10 @@ use lib::allow ();
 
 test_lib_allow(
     name => "basics",
-    args => ["Exporter"],
-    require_ok => ["Exporter"],
-    require_nok => ["utf8"],
+    args => ["Foo"],
+    extra_libs => ["$Bin/lib"],
+    require_ok => ["Foo"],
+    require_nok => ["Bar"],
 );
 
 done_testing;
