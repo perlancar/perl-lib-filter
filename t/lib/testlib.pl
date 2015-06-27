@@ -1,6 +1,4 @@
 use File::Temp qw(tempfile);
-use IPC::System::Options qw(system);
-use Test::Exception;
 use Test::More 0.98;
 
 sub _test_lib {
@@ -22,7 +20,7 @@ sub _test_lib {
                 "use $ent->{module}",
             );
             note "system: ", explain @system_args;
-            system({shell=>0, log=>1}, @system_args);
+            system(@system_args);
             my $child_err = $?;
             if ($ent->{ok}) {
                 ok(!$child_err, "require $ent->{module} ok")
