@@ -25,10 +25,10 @@ sub _test_lib {
             system({shell=>0, log=>1}, @system_args);
             my $child_err = $?;
             if ($ent->{ok}) {
-                ok(!$child_err, "req $ent->{module} ok")
+                ok(!$child_err, "require $ent->{module} ok")
                     or diag "child_err=$child_err";
             } else {
-                ok( $child_err, "req $ent->{module} nok");
+                ok( $child_err, "require $ent->{module} nok");
             }
         }
     };
