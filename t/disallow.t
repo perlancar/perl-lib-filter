@@ -1,5 +1,7 @@
 #!perl
 
+BEGIN { @main::ORIG_INC = @INC }
+
 use strict;
 use warnings;
 

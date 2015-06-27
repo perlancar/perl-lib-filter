@@ -1,5 +1,8 @@
 use File::Temp qw(tempfile);
+use Module::List qw(list_modules);
 use Test::More 0.98;
+
+my $has_listed_modules;
 
 sub _test_lib {
     my $which = shift;
@@ -23,8 +26,17 @@ sub _test_lib {
             system(@system_args);
             my $child_err = $?;
             if ($ent->{ok}) {
-                ok(!$child_err, "require $ent->{module} ok")
-                    or diag "child_err=$child_err";
+                unless (ok(!$child_err, "require $ent->{module} ok")) {
+                    if (!$has_listed_modules++) {
+                        local @INC = (
+                            @{ $args{extra_lib} || [] },
+                            @main::ORIG_INC,
+                        );
+                        diag explain list_modules(
+                            "", {list_modules=>1, recurse=>1},
+                        );
+                    }
+                }
             } else {
                 ok( $child_err, "require $ent->{module} nok");
             }
