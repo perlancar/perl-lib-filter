@@ -1,5 +1,13 @@
 Revision history for lib-filter
 
+0.17    2015-06-28 (PERLANCAR)
+
+	- No functional changes.
+
+	- [testing] Included Module::List::WithPath in t/lib/Module/List.pm
+	  instead of t/lib/Module/List/WithPath.pm, derp.
+
+
 0.16    2015-06-28 (PERLANCAR)
 
 	- No functional changes.
