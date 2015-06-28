@@ -44,6 +44,16 @@ my $orig_inc;
 sub import {
     my ($class, %opts) = @_;
 
+    for (keys %opts) {
+        die "Unknown option $_"
+            unless /\A(
+                        allow_core|allow_noncore|
+                        extra_inc|
+                        allow|allow_list|allow_re|
+                        disallow|disallow_list|disallow_re
+                    )\z/x;
+    }
+
     $opts{allow_core}    = 1 if !defined($opts{allow_core});
     $opts{allow_noncore} = 1 if !defined($opts{allow_noncore});
 
