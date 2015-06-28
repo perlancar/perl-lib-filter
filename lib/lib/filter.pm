@@ -273,16 +273,34 @@ Allow non-core modules.
 
 Add additional path to search modules in. String must be colon-separated paths.
 
+=item * filter => code
+
+Do custom filtering. Code will receive module name (e.g. C<Foo/Bar.pm>) as its
+argument and should return 1 if the module should be allowed.
+
 =back
 
-How a module is filtered: first, it is checked against the
-disallow/disallow_re/disallow_list. If it matches one of those options then the
-module is disallowed. Otherwise it is checked against the
-allow/allow_re/allow_list. If it matches one of those options and the module's
-path is found in the directories in @INC, then the module is allowed. Finally,
-allow_core/allow_noncore is checked. When allow_core is set to false, core
-directories are excluded. Likewise, when allow_noncore is set to false, non-core
-directories are excluded.
+How a module is filtered:
+
+=over
+
+=item * First it's checked against C<filter>, if that option is defined
+
+=item * then, it is checked against the disallow/disallow_re/disallow_list.
+
+If it matches one of those options then the module is disallowed.
+
+=item * Otherwise it is checked against the allow/allow_re/allow_list.
+
+If it matches one of those options and the module's path is found in the
+directories in C<@INC>, then the module is allowed.
+
+=item * Finally, allow_core/allow_noncore is checked.
+
+When C<allow_core> is set to false, core directories are excluded. Likewise,
+when C<allow_noncore> is set to false, non-core directories are excluded.
+
+=back
 
 
 =head1 SEE ALSO
