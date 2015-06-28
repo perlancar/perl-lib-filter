@@ -91,7 +91,7 @@ test_lib_filter(
     # XXX we need to select modules which are only available in core dir and not
     # in non-core dir
 
-    # require_nok => ["Exporter"],
+    # require_nok => ["base"],
 
     require_ok => ["Foo"],
 );
@@ -100,7 +100,7 @@ test_lib_filter(
     name => "allow_noncore=0",
     args => [allow_noncore=>0],
     extra_libs => ["$Bin/../lib", "$Bin/lib"],
-    require_ok => ["Exporter"], # core
+    require_ok => ["base"], # core
     require_nok => ["Foo"],
 );
 
