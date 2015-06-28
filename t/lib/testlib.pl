@@ -1,5 +1,5 @@
 use File::Temp qw(tempfile);
-use Module::List qw(list_modules);
+use Module::List::WithPath qw(list_modules);
 use Test::More 0.98;
 
 my $has_listed_modules;
