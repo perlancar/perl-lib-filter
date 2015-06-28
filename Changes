@@ -1,5 +1,13 @@
 Revision history for lib-filter
 
+0.14    2015-06-28 (PERLANCAR)
+
+	- No functional changes.
+
+	- [dist] Put Module::List::WithPath as TestSuggests to mark where
+	  that module is used as prereq.
+
+
 0.13    2015-06-28 (PERLANCAR)
 
         - [testing] Print list of modules on failure to require.
