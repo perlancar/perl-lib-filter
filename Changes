@@ -39,44 +39,45 @@ Revision history for lib-filter
 
 0.11    2015-06-26 (PERLANCAR)
 
-	- Use dummy modules for most testing [GH#4].
+	- [testing] Use dummy modules for most testing [GH#4].
 
 
 0.10    2015-06-25 (PERLANCAR)
 
-        - Fix test failures.
+        - [testing] Fix test failures.
 
 
 0.09    2015-06-24 (PERLANCAR)
 
-        - Change tests to use external Perl interpreters instead of in-process,
-          to isolate from internals of Test::More, etc.
+        - [testing] Change tests to use external Perl interpreters instead of
+          in-process, to isolate from internals of Test::More, etc.
 
 
 0.08    2015-06-18 (PERLANCAR)
 
 	- No functional changes.
 
-	- Preload Scalar::Util because it's used by Test::More (delay
+	- [testing] Preload Scalar::Util because it's used by Test::More (delay
 	  loading).
 
-	- Remove stacktrace printer.
+	- [testing] Remove stacktrace printer.
 
 
 0.07    2015-06-18 (PERLANCAR)
 
         - No functional changes.
 
-        - [build] Rebuild with updated/fixed stacktrace printer from
+        - [testing] [build] Rebuild with updated/fixed stacktrace printer from
           Code::Embeddable.
 
 
 0.06    2015-06-18 (PERLANCAR)
 
-        - Preload Test::Builder's prerequisites before loading Test::* (thanks
-          Sinan Ünür).
+        - [testing] Preload Test::Builder's prerequisites before loading Test::*
+          (thanks Sinan Ünür).
 
-        - Install a simple stacktrace printer in the tests, to help debug problems.
+        - [testing] Install a simple stacktrace printer in the tests, to help
+          debug problems.
 
         - Doc tweaks.
 
@@ -85,9 +86,9 @@ Revision history for lib-filter
 
         - No functional changes.
 
-        - Fix tests [GH #2].
+        - [testing] Fix tests [GH #2].
 
-        - Add more tests.
+        - [testing] Add more tests.
 
 
 0.04    2015-05-26 (PERLANCAR)
@@ -96,7 +97,7 @@ Revision history for lib-filter
 
         - Tweak POD & examples.
 
-        - Reduce use of modules (we're now down to Config,strict,warnings; no
+        - Reduce use of modules (we're now down to Config, strict, warnings; no
           more experimental).
 
 
@@ -104,7 +105,7 @@ Revision history for lib-filter
 
         - Add unimport().
 
-        - Add minimal tests.
+        - [testing] Add minimal tests.
 
 
 0.02    2015-05-19 (PERLANCAR)
