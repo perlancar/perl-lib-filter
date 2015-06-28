@@ -50,12 +50,19 @@ sub import {
                         allow_core|allow_noncore|
                         extra_inc|
                         allow|allow_list|allow_re|
-                        disallow|disallow_list|disallow_re
+                        disallow|disallow_list|disallow_re|
+                        filter
                     )\z/x;
     }
 
     $opts{allow_core}    = 1 if !defined($opts{allow_core});
     $opts{allow_noncore} = 1 if !defined($opts{allow_noncore});
+
+    if ($opts{filter} && !ref($opts{filter})) {
+        # convenience, for when filter is specified from command-line (-M)
+        $opts{filter} = eval $opts{filter};
+        die "Error in filter code: $@" if $@;
+    }
 
     if ($opts{extra_inc}) {
         unshift @INC, split(/:/, $opts{extra_inc});
@@ -105,6 +112,9 @@ sub import {
       FILTER:
         {
             my $mod = $file; $mod =~ s/\.pm$//; $mod =~ s!/!::!g;
+            if ($opts{filter} && !$opts{filter}->($mod)) {
+                die "Module '$mod' is disallowed (filter)";
+            }
             if ($opts{disallow_re} && $mod =~ /$opts{disallow_re}/) {
                 die "Module '$mod' is disallowed (disallow_re)";
             }

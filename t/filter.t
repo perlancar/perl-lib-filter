@@ -10,6 +10,20 @@ use lib "$Bin/lib";
 BEGIN { require "testlib.pl" };
 
 test_lib_filter(
+    name => 'filter sub{0}',
+    args => ["filter", "sub{0}"],
+    extra_libs => ["$Bin/../lib", "$Bin/lib"],
+    require_nok => ["Foo"],
+);
+
+test_lib_filter(
+    name => 'filter sub{1}',
+    args => ["filter", "sub{1}"],
+    extra_libs => ["$Bin/../lib", "$Bin/lib"],
+    require_ok => ["Foo"],
+);
+
+test_lib_filter(
     name => 'disallow',
     args => ["disallow", "Foo;Bar"],
     extra_libs => ["$Bin/../lib", "$Bin/lib"],
