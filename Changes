@@ -1,5 +1,14 @@
 Revision history for lib-filter
 
+0.13    2015-06-28 (PERLANCAR)
+
+        - [testing] Print list of modules on failure to require.
+
+        - [testing] Remove the use of Test::Exception (unused) and
+          IPC::System::Options (replaced with plain system()) so that lib-filter
+          now does not depend on any non-core modules.
+
+
 0.12    2015-06-26 (PERLANCAR)
 
 	- No functional changes.
