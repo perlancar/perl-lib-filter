@@ -1,5 +1,13 @@
 Revision history for lib-filter
 
+0.16    2015-06-28 (PERLANCAR)
+
+	- No functional changes.
+
+	- [testing] Replace Exporter with base, due to failure reports in
+	  some system where Exporter is located in non-core dir [CT].
+
+
 0.15    2015-06-28 (PERLANCAR)
 
         - Add option: filter.
