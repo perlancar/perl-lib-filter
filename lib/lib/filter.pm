@@ -112,8 +112,11 @@ sub import {
       FILTER:
         {
             my $mod = $file; $mod =~ s/\.pm$//; $mod =~ s!/!::!g;
-            if ($opts{filter} && !$opts{filter}->($mod)) {
-                die "Module '$mod' is disallowed (filter)";
+            if ($opts{filter}) {
+                local $_ = $mod;
+                unless ($opts{filter}->($mod)) {
+                    die "Module '$mod' is disallowed (filter)";
+                }
             }
             if ($opts{disallow_re} && $mod =~ /$opts{disallow_re}/) {
                 die "Module '$mod' is disallowed (disallow_re)";
@@ -209,6 +212,9 @@ sub unimport {
  # idem, but the list of disallowed modules are retrieved from a file
  % perl -Mlib::filter=disallow_list,/tmp/disallow.txt yourscript.pl
 
+ # custom filtering (disallow Foo::*)xs
+ % perl -Mlib::filter=filter,sub{not/^Foo::/} yourscript.pl
+
 
 =head1 DESCRIPTION
 
@@ -286,7 +292,8 @@ Add additional path to search modules in. String must be colon-separated paths.
 =item * filter => code
 
 Do custom filtering. Code will receive module name (e.g. C<Foo/Bar.pm>) as its
-argument and should return 1 if the module should be allowed.
+argument (C<$_> is also localized to contained the module name, for convenience)
+and should return 1 if the module should be allowed.
 
 =back
 
