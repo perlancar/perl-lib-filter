@@ -44,9 +44,12 @@ my $orig_inc;
 sub import {
     my ($class, %opts) = @_;
 
+    my $dbgh = "[lib::filter]";
+
     for (keys %opts) {
         die "Unknown option $_"
             unless /\A(
+                        debug|
                         allow_core|allow_noncore|
                         extra_inc|
                         allow|allow_list|allow_re|
@@ -108,12 +111,15 @@ sub import {
     $hook = sub {
         my ($self, $file) = @_;
 
+        warn "$dbgh hook called for $file\n" if $opts{debug};
+
         my $path;
       FILTER:
         {
             my $mod = $file; $mod =~ s/\.pm$//; $mod =~ s!/!::!g;
             if ($opts{filter}) {
                 local $_ = $mod;
+                warn "$dbgh Checking against custom filter ...\n" if $opts{debug};
                 unless ($opts{filter}->($mod)) {
                     die "Module '$mod' is disallowed (filter)";
                 }
@@ -125,11 +131,13 @@ sub import {
                 die "Module '$mod' is disallowed ($disallow{$mod})";
             }
             if ($opts{allow_re} && $mod =~ /$opts{allow_re}/) {
+                warn "$dbgh module $mod matches allow_re\n" if $opts{debug};
                 $path = module_path($file, $orig_inc);
                 last FILTER if $path;
                 die "Module '$mod' is allowed (allow_re) but can't locate $file in \@INC (\@INC contains: ".join(" ", @INC);
             }
             if ($allow{$mod}) {
+                warn "$dbgh module $mod matches $allow{$mod}\n" if $opts{debug};
                 $path = module_path($file, $orig_inc);
                 last FILTER if $path;
                 die "Module '$mod' is allowed ($allow{$mod}) but can't locate $file in \@INC (\@INC contains: ".join(" ", @INC);
@@ -143,12 +151,19 @@ sub import {
             } elsif ($opts{allow_noncore}) {
                 $inc = $noncore_inc;
             }
-            $path = module_path($file, $inc) if $inc;
+            if ($inc) {
+                warn "$dbgh searching $file in (".join(", ", @$inc).")\n" if $opts{debug};
+                $path = module_path($file, $inc);
+            }
             last FILTER if $path;
         } # FILTER
 
-        return unless $path;
+        unless ($path) {
+            warn "$dbgh $file not found\n" if $opts{debug};
+            return;
+        }
 
+        warn "$dbgh $file found at $path\n" if $opts{debug};
         $INC{$file} = $path;
         return _open_handle($path);
     };
@@ -252,6 +267,10 @@ To use this pragma:
 Known options:
 
 =over
+
+=item * debug => bool
+
+If set to true, print diagnostics when filtering.
 
 =item * disallow => str
 
