@@ -1,5 +1,15 @@
 Revision history for lib-filter
 
+0.18    2015-06-29 (PERLANCAR)
+
+	- Update example because using 'allow_noncore=0 + allow some
+	  non-core XS modules' doesn't work because the non-core XS modules
+	  will still search for loadable object in @INC; instead we'll use
+	  custom filter for this.
+
+	- Add option: debug.
+
+
 0.17    2015-06-28 (PERLANCAR)
 
 	- No functional changes.
