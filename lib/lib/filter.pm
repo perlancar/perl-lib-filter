@@ -208,9 +208,6 @@ sub unimport {
  # only allow a specific set of modules
  % perl -Mlib::filter=allow_core,0,allow_noncore,0,allow,'XSLoader,List::Util' yourscript.pl
 
- # allow core modules plus some more modules
- % perl -Mlib::filter=allow_noncore,0,allow,'List::MoreUtils;List::MoreUtils::PP;List::MoreUtils::XS' yourscript.pl
-
  # allow core modules plus additional modules by pattern
  % perl -Mlib::filter=allow_noncore,0,allow_re,'^DateTime::.*' yourscript.pl
 
@@ -219,6 +216,9 @@ sub unimport {
 
  # allow core modules plus additional modules found in some dirs
  % perl -Mlib::filter=allow_noncore,0,extra_path,'.:proj/lib' yourscript.pl
+
+ # allow core modules plus some non-core XS modules
+ % perl -MModule::CoreList -Mlib::filter=filter,'sub{ return 1 if Module::CoreList->is_core($_); return 1 if m!Clone|Acme/Damn!; 0' yourscript.pl
 
  # disallow some modules (for testing/simulating the non-availability of a
  # module, pretending that a module does not exist)
