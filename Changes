@@ -1,5 +1,10 @@
 Revision history for lib-filter
 
+0.19    2015-06-30 (PERLANCAR)
+
+	- Add lib::coreplus.
+
+
 0.18    2015-06-29 (PERLANCAR)
 
 	- Update example because using 'allow_noncore=0 + allow some
