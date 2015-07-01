@@ -252,7 +252,7 @@ For example to test a fatpacked script that might still require some XS modules:
 Alternatively, you can also test by preloading the additional modules before
 using lib::core::only:
 
- % perl -MClone -MAcme::Damn -Mlib::core::only yourscript.pl
+ % perl -mClone -mAcme::Damn -Mlib::core::only yourscript.pl
 
 =item * To disallow some modules:
 
