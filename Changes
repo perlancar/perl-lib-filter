@@ -1,5 +1,13 @@
 Revision history for lib-filter
 
+0.20    2015-07-01 (PERLANCAR)
+
+	- No functional changes.
+
+	- [doc] Rework documentation, present alternatives to using
+	  lib::filter for some tasks.
+
+
 0.19    2015-06-30 (PERLANCAR)
 
 	- Add lib::coreplus.
