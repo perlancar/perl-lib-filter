@@ -193,76 +193,88 @@ sub unimport {
 }
 
 1;
-# ABSTRACT: Only allow some specified modules to be locateable/loadable
+# ABSTRACT: Allow/disallow loading modules
 
 =for Pod::Coverage .+
 
 =head1 SYNOPSIS
 
- # equivalent to -Mlib::none
+ use lib::filter %opts;
+
+
+=head1 DESCRIPTION
+
+lib::filter lets you allow/disallow loading modules using some rules. It works
+by installing a coderef in C<@INC> (and additionally by pruning some entries in
+C<@INC>). The main use-case for this pragma is for testing.
+
+It has been pointed out to me that for some tasks, alternatives to using this
+module exist, so I'll be presenting those in the examples below.
+
+=over
+
+=item * To disallow loading any module:
+
  % perl -Mlib::filter=allow_core,0,allow_noncore,0 yourscript.pl
 
- # equivalent to -Mlib::core::only
+You can also use L<lib::none> for this, or simply empty C<@INC>.
+
+=item * To allow only core modules:
+
+For example for testing a fatpacked script (see L<App::FatPacker>):
+
  % perl -Mlib::filter=allow_noncore,0 yourscript.pl
 
- # only allow a specific set of modules
+You can also use L<lib::core::only> for this, which comes with the App-FatPacker
+distribution.
+
+=item * To only allow a specific set of modules:
+
  % perl -Mlib::filter=allow_core,0,allow_noncore,0,allow,'XSLoader,List::Util' yourscript.pl
 
- # allow core modules plus additional modules by pattern
+=item * To allow core modules plus some additional modules:
+
+For example to test a fatpacked script that might still require some XS modules:
+
+# allow additional modules by pattern
  % perl -Mlib::filter=allow_noncore,0,allow_re,'^DateTime::.*' yourscript.pl
 
- # allow core modules plus additional modules listed in a file
+ # allow additional modules listed in a file
  % perl -Mlib::filter=allow_noncore,0,allow_list,'/tmp/allow.txt' yourscript.pl
 
  # allow core modules plus additional modules found in some dirs
  % perl -Mlib::filter=allow_noncore,0,extra_path,'.:proj/lib' yourscript.pl
 
- # allow core modules plus some non-core XS modules
+ # allow some non-core XS modules
  % perl -MModule::CoreList -Mlib::filter=filter,'sub{ return 1 if Module::CoreList->is_core($_); return 1 if m!Clone|Acme/Damn!; 0' yourscript.pl
+ % perl -Mlib::coreplus=Clone,Acme::Damn yourscript.pl
 
- # disallow some modules (for testing/simulating the non-availability of a
- # module, pretending that a module does not exist)
- % perl -Mlib::filter=disallow,'YAML::XS,JSON::XS' yourscript.pl
+Alternatively, you can also test by preloading the additional modules before
+using lib::core::only:
+
+ % perl -MClone -MAcme::Damn -Mlib::core::only yourscript.pl
+
+=item * To disallow some modules:
+
+For example to test that a script can still run without a module (e.g. an
+optional prereq):
+
+ % perl -Mlib::filter=disallow,'YAML::XS;JSON::XS' yourscript.pl
 
  # idem, but the list of disallowed modules are retrieved from a file
  % perl -Mlib::filter=disallow_list,/tmp/disallow.txt yourscript.pl
 
- # custom filtering (disallow Foo::*)xs
+L<Devel::Hide> is another module which you can you for exactly this purpose:
+
+ % perl -MDevel::Hide=YAML::XS,JSON::XS yourscript.pl
+
+=item * Do custom filtering
+
  % perl -Mlib::filter=filter,sub{not/^Foo::/} yourscript.pl
-
-
-=head1 DESCRIPTION
-
-This pragma installs a hook in C<@INC> to allow only some modules from being
-found/loadable. This pragma is useful for testing, e.g.:
-
-=over
-
-=item * test whether a fatpacked script really can run with just core modules;
-
-=item * test that a program/module can function when an optional (recommends/suggests) dependency is absent;
-
-=item * test that a test script can function (i.e. skip tests) when an optional dependency is absent;
 
 =back
 
-more flexible than L<lib::none> and L<lib::core::only>.
-
-lib::none is absolutely ruthless: your fatpacked script must fatpack all modules
-(including things like L<strict>, L<warnings>) as lib::none empties C<@INC> and
-removes perl's ability to load any more modules.
-
-lib::core::only only puts core paths in C<@INC> so your fatpacked script must
-contain all non-core modules. But this is also too restrictive in some cases
-because we cannot fatpack XS modules and want to let the script load those from
-filesystem.
-
-lib::filter makes it possible for you to, e.g. only allow core modules, plus
-some other modules (like some XS modules).
-
-To use this pragma:
-
- use lib::filter %opts;
+=head1 OPTIONS
 
 Known options:
 
