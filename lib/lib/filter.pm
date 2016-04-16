@@ -359,4 +359,6 @@ L<lib::core::only>
 
 L<Devel::Hide>
 
+L<Test::Without::Module>
+
 =cut
