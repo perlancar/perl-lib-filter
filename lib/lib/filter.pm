@@ -117,30 +117,31 @@ sub import {
       FILTER:
         {
             my $mod = $file; $mod =~ s/\.pm$//; $mod =~ s!/!::!g;
+            my $err_prefix = "Can't locate $file";
             if ($opts{filter}) {
                 local $_ = $mod;
                 warn "$dbgh Checking against custom filter ...\n" if $opts{debug};
                 unless ($opts{filter}->($mod)) {
-                    die "Module '$mod' is disallowed (filter)";
+                    die "$err_prefix (module '$mod' is disallowed (filter))";
                 }
             }
             if ($opts{disallow_re} && $mod =~ /$opts{disallow_re}/) {
-                die "Module '$mod' is disallowed (disallow_re)";
+                die "$err_prefix (module '$mod' is disallowed (disallow_re))";
             }
             if ($disallow{$mod}) {
-                die "Module '$mod' is disallowed ($disallow{$mod})";
+                die "$err_prefix (module '$mod' is disallowed ($disallow{$mod}))";
             }
             if ($opts{allow_re} && $mod =~ /$opts{allow_re}/) {
                 warn "$dbgh module $mod matches allow_re\n" if $opts{debug};
                 $path = module_path($file, $orig_inc);
                 last FILTER if $path;
-                die "Module '$mod' is allowed (allow_re) but can't locate $file in \@INC (\@INC contains: ".join(" ", @INC);
+                die "$err_prefix (module '$mod' is allowed (allow_re) but can't locate $file in \@INC (\@INC contains: ".join(" ", @INC)."))";
             }
             if ($allow{$mod}) {
                 warn "$dbgh module $mod matches $allow{$mod}\n" if $opts{debug};
                 $path = module_path($file, $orig_inc);
                 last FILTER if $path;
-                die "Module '$mod' is allowed ($allow{$mod}) but can't locate $file in \@INC (\@INC contains: ".join(" ", @INC);
+                die "$err_prefix (module '$mod' is allowed ($allow{$mod}) but can't locate $file in \@INC (\@INC contains: ".join(" ", @INC)."))";
             }
 
             my $inc;
