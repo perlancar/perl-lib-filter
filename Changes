@@ -1,5 +1,13 @@
 Revision history for lib-filter
 
+0.22    2016-05-19 (PERLANCAR)
+
+        - No functional changes.
+
+        - [test] Replace Module::List::WithPath with PERLANCAR::Module::List,
+          make it optional.
+
+
 0.21    2016-05-18 (PERLANCAR)
 
 	- Show error message "Can't locate FILE (...)" to fool Test::Needs.
