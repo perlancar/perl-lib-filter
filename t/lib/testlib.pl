@@ -1,5 +1,4 @@
 use File::Temp qw(tempfile);
-use Module::List::WithPath qw(list_modules);
 use Test::More 0.98;
 
 my $has_listed_modules;
@@ -32,9 +31,14 @@ sub _test_lib {
                             @{ $args{extra_lib} || [] },
                             @main::ORIG_INC,
                         );
-                        diag explain list_modules(
-                            "", {list_modules=>1, recurse=>1},
-                        );
+                        if (eval { require PERLANCAR::Module::List; 1 }) {
+                            diag explain PERLANCAR::Module::List::list_modules(
+                                "", {
+                                    list_modules=>1,
+                                    recurse=>1,
+                                    return_path=>1},
+                            );
+                        }
                     }
                 }
             } else {
