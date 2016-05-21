@@ -354,12 +354,10 @@ when C<allow_noncore> is set to false, non-core directories are excluded.
 
 =head1 SEE ALSO
 
-L<lib::none>
+Related/similar modules: L<lib::none>, L<lib::core::only>, L<Devel::Hide>,
+L<Test::Without::Module>.
 
-L<lib::core::only>
-
-L<Devel::Hide>
-
-L<Test::Without::Module>
+To simulate the absence of certain programs in PATH, you can try
+L<File::Which::Patch::Hide>.
 
 =cut
