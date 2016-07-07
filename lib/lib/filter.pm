@@ -97,6 +97,7 @@ sub import {
     if ($opts{disallow}) {
         for (split /\s*;\s*/, $opts{disallow}) {
             $disallow{$_} = "disallow";
+            (my $pm = "$_.pm") =~ s!::!/!g; delete $INC{$pm};
         }
     }
     if ($opts{disallow_list}) {
@@ -106,6 +107,7 @@ sub import {
             $line =~ s/^\s+//;
             $line =~ /^(\w+(?:::\w+)*)/ or next;
             $disallow{$1} ||= "disallow_list";
+            (my $pm = "$1.pm") =~ s!::!/!g; delete $INC{$pm};
         }
     }
 
