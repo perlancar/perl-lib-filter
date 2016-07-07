@@ -3,6 +3,7 @@ package lib::filter;
 # DATE
 # VERSION
 
+# no need to avoid strict & warnings, because Config uses them
 use strict;
 use warnings;
 use Config;
