@@ -54,6 +54,7 @@ sub import {
                         allow_core|allow_noncore|
                         extra_inc|
                         allow|allow_list|allow_re|
+                        allow_is_recursive|
                         disallow|disallow_list|disallow_re|
                         filter
                     )\z/x;
@@ -114,7 +115,9 @@ sub import {
     $hook = sub {
         my ($self, $file) = @_;
 
-        warn "$dbgh hook called for $file\n" if $opts{debug};
+        my @caller = caller(0);
+
+        warn "$dbgh hook called for $file (from package $caller[0] file $caller[1])\n" if $opts{debug};
 
         my $path;
       FILTER:
@@ -145,6 +148,14 @@ sub import {
                 $path = module_path($file, $orig_inc);
                 last FILTER if $path;
                 die "$err_prefix (module '$mod' is allowed ($allow{$mod}) but can't locate $file in \@INC (\@INC contains: ".join(" ", @INC)."))";
+            }
+            if ($opts{allow_is_recursive}) {
+                my $caller_pkg = $caller[0]; # XXX also try to deduce from $caller[1]
+                (my $pm = "$caller_pkg.pm") =~ s!::!/!g;
+                if (exists $INC{$pm}) {
+                    $path = module_path($file, $orig_inc);
+                    last FILTER if $path;
+                }
             }
 
             my $inc;
@@ -311,6 +322,14 @@ Allow modules matching regex pattern.
 =item * allow_list => filename
 
 Read a file containing list of modules to allow (one module per line).
+
+=item * allow_is_recursive => bool (default: 0)
+
+If set to 1, then will also allow modules that are required by the allowed
+modules (and modules that are allowed by I<those> modules, and so on). This is
+convenient if you want to allow a non-trivial module, say, L<Moo> or L<Moose>
+which will require other modules too. Without this option, you will need to
+explicitly allow each of those modules yourself.
 
 =item * allow_core => bool (default: 1)
 
