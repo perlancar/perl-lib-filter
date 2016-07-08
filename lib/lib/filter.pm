@@ -40,7 +40,7 @@ sub _open_handle {
 }
 
 my $hook;
-my $orig_inc;
+my ($orig_inc, $orig_inc_sorted_by_len);
 
 sub import {
     my ($class, %opts) = @_;
@@ -73,7 +73,10 @@ sub import {
         unshift @INC, split(/:/, $opts{extra_inc});
     }
 
-    $orig_inc ||= [@INC];
+    if (!$orig_inc) {
+        $orig_inc = [@INC];
+        $orig_inc_sorted_by_len = [sort {length($b) <=> length($a)} @INC];
+    }
 
     my $core_inc = [@Config{qw(privlibexp archlibexp)}];
     my $noncore_inc = [grep {$_ ne $Config{privlibexp} &&
@@ -150,11 +153,23 @@ sub import {
                 die "$err_prefix (module '$mod' is allowed ($allow{$mod}) but can't locate $file in \@INC (\@INC contains: ".join(" ", @INC)."))";
             }
             if ($opts{allow_is_recursive}) {
-                my $caller_pkg = $caller[0]; # XXX also try to deduce from $caller[1]
-                (my $pm = "$caller_pkg.pm") =~ s!::!/!g;
-                if (exists $INC{$pm}) {
-                    $path = module_path($file, $orig_inc);
-                    last FILTER if $path;
+                my $caller_pkg_from_file;
+                for (@$orig_inc_sorted_by_len) {
+                    #print "D:\$_=<$_> vs $caller[1]\n";
+                    if (index($caller[1], $_) == 0) {
+                        $caller_pkg_from_file = substr($caller[1], length($_)+1);
+                        #print "D:caller_pkg_from_file=<$caller_pkg_from_file>\n";
+                        $caller_pkg_from_file =~ s/\.pm\z//;
+                        $caller_pkg_from_file =~ s/\Q$Config{archname}\E.//;
+                        $caller_pkg_from_file =~ s![/\\]!::!g;
+                    }
+                }
+                for my $caller_pkg (grep {defined} $caller[0], $caller_pkg_from_file) {
+                    (my $pm = "$caller_pkg.pm") =~ s!::!/!g;
+                    if (exists $INC{$pm}) {
+                        $path = module_path($file, $orig_inc);
+                        last FILTER if $path;
+                    }
                 }
             }
 
