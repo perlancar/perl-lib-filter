@@ -1,5 +1,15 @@
 Revision history for lib-filter
 
+0.23    2016-07-08 (PERLANCAR)
+
+	- Add option: allow_is_recursive.
+
+	- Make it possible to disallow modules that are already loaded,
+	  e.g. strict, warnings, Config, etc.
+
+	- [doc] Mention File::Which::Patch::Hide.
+
+
 0.22    2016-05-19 (PERLANCAR)
 
         - No functional changes.
