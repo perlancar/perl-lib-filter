@@ -168,7 +168,10 @@ sub import {
                     (my $pm = "$caller_pkg.pm") =~ s!::!/!g;
                     if (exists $INC{$pm}) {
                         $path = module_path($file, $orig_inc);
-                        last FILTER if $path;
+                        if ($path) {
+                            warn "$dbgh module '$mod' allowed because it is require'd by $caller_pkg (allow_is_recursive=1)\n" if $opts{debug};
+                            last FILTER;
+                        }
                     }
                 }
             }
