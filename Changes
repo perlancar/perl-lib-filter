@@ -1,5 +1,14 @@
 Revision history for lib-filter
 
+0.25    2016-07-09 (PERLANCAR)
+
+        - No functional changes.
+
+        - Document, add test and example for allow_is_recursive=1.
+
+        - [doc] Fix typos in examples.
+
+
 0.24    2016-07-08 (PERLANCAR)
 
 	- Also deduce caller package name from filename, this handles e.g.
