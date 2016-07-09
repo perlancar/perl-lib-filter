@@ -263,7 +263,7 @@ distribution.
 
 =item * To only allow a specific set of modules:
 
- % perl -Mlib::filter=allow_core,0,allow_noncore,0,allow,'XSLoader,List::Util' yourscript.pl
+ % perl -Mlib::filter=allow_core,0,allow_noncore,0,allow,'XSLoader;List::Util' yourscript.pl
 
 =item * To allow core modules plus some additional modules:
 
@@ -276,7 +276,7 @@ For example to test a fatpacked script that might still require some XS modules:
  % perl -Mlib::filter=allow_noncore,0,allow_list,'/tmp/allow.txt' yourscript.pl
 
  # allow core modules plus additional modules found in some dirs
- % perl -Mlib::filter=allow_noncore,0,extra_path,'.:proj/lib' yourscript.pl
+ % perl -Mlib::filter=allow_noncore,0,extra_inc,'.:proj/lib' yourscript.pl
 
  # allow some non-core XS modules
  % perl -MModule::CoreList -Mlib::filter=filter,'sub{ return 1 if Module::CoreList->is_core($_); return 1 if m!Clone|Acme/Damn!; 0' yourscript.pl
