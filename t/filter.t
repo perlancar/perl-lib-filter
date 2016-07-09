@@ -9,6 +9,8 @@ use FindBin '$Bin';
 use lib "$Bin/lib";
 BEGIN { require "testlib.pl" };
 
+use Test::Needs;
+
 test_lib_filter(
     name => 'filter sub{0}',
     args => ["filter", "sub{0}"],
@@ -82,6 +84,21 @@ test_lib_filter(
         require_nok => ["Baz"],
     );
 }
+
+subtest "allow_is_recursive" => sub {
+    test_needs "Moo";
+
+    test_lib_filter(
+        name => 'allow_is_recursive=0',
+        args => [allow_noncore=>0, allow => 'Moo'],
+        require_nok => ["Moo"],
+    );
+    test_lib_filter(
+        name => 'allow_is_recursive=1',
+        args => [allow_noncore=>0, allow_is_recursive=>1, allow => 'Moo'],
+        require_ok => ["Moo"],
+    );
+};
 
 test_lib_filter(
     name => "allow_core=0",
