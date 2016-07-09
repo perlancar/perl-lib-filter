@@ -287,6 +287,13 @@ using lib::core::only:
 
  % perl -mClone -mAcme::Damn -Mlib::core::only yourscript.pl
 
+=item * To allow a module and recursively all other modules that the module requires
+
+This is convenient when we want to allow a non-trivial module which itself uses
+some other modules, e.g. L<Moo> or L<Moose>:
+
+ % perl -Mlib::filter=allow_noncore,0,allow,Moo,allow_is_recursive=0
+
 =item * To disallow some modules:
 
 For example to test that a script can still run without a module (e.g. an
@@ -375,14 +382,21 @@ How a module is filtered:
 
 =item * First it's checked against C<filter>, if that option is defined
 
-=item * then, it is checked against the disallow/disallow_re/disallow_list.
+=item * then, it is checked against the C<disallow>/C<disallow_re>/C<disallow_list>.
 
 If it matches one of those options then the module is disallowed.
 
-=item * Otherwise it is checked against the allow/allow_re/allow_list.
+=item * Otherwise it is checked against the C<allow>/C<allow_re>/C<allow_list>.
 
 If it matches one of those options and the module's path is found in the
 directories in C<@INC>, then the module is allowed.
+
+=item * If C<allow_is_recursive> is true, check the requirer.
+
+If the calling package is already in C<%INC>, we allow that. For example, if we
+allow C<Moo> and C<Moo> calls L<Moo::_strictures> and L<Module::Runtime>, we
+will also allow them. Later if C<Moo::_strictures> tries to load L<strictures>,
+we also allow it, and so on.
 
 =item * Finally, allow_core/allow_noncore is checked.
 
