@@ -43,4 +43,8 @@ is equivalent to:
 
 L<lib::filter>
 
+If an application checks the availability of modules by using L<Module::Path> or
+L<Module::Path::More> instead of trying to load them, you can try:
+L<Module::Path::Patch::Hide> or L<Module::Path::More::Patch::Hide>.
+
 =cut
