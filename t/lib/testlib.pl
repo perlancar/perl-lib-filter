@@ -1,7 +1,7 @@
 use File::Temp qw(tempfile);
 use Test::More 0.98;
 
-my $has_listed_modules;
+my $already_listed_modules;
 
 sub _test_lib {
     my $which = shift;
@@ -26,7 +26,7 @@ sub _test_lib {
             my $child_err = $?;
             if ($ent->{ok}) {
                 unless (ok(!$child_err, "require $ent->{module} ok")) {
-                    if (!$has_listed_modules++) {
+                    if (!$already_listed_modules++) {
                         local @INC = (
                             @{ $args{extra_lib} || [] },
                             @main::ORIG_INC,
