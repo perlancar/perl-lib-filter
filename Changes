@@ -1,5 +1,13 @@
 Revision history for lib-filter
 
+0.26    2016-08-23 (PERLANCAR)
+
+        - No functional changes.
+
+        - [test] Replace dumping all installed modules when diagnosing require
+          test failure to just printing the require'd module's path.
+
+
 0.25    2016-07-09 (PERLANCAR)
 
         - No functional changes.
