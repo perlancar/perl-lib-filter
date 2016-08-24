@@ -1,5 +1,13 @@
 Revision history for lib-filter
 
+0.27    2016-08-24 (PERLANCAR)
+
+	- No functional changes.
+
+	- [test] Use overload.pm instead of base.pm when testing for core
+	  module, because base.pm is dual-life.
+
+
 0.26    2016-08-23 (PERLANCAR)
 
         - No functional changes.
