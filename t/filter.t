@@ -106,9 +106,9 @@ test_lib_filter(
     args => [allow_core=>0],
 
     # XXX we need to select modules which are only available in core dir and not
-    # in non-core dir
+    # in non-core dir. e.g. a core, non-dual-life module.
 
-    # require_nok => ["base"],
+    # require_nok => ["overload"],
 
     require_ok => ["Foo"],
 );
@@ -117,7 +117,7 @@ test_lib_filter(
     name => "allow_noncore=0",
     args => [allow_noncore=>0],
     extra_libs => ["$Bin/../lib", "$Bin/lib"],
-    require_ok => ["base"], # core
+    require_ok => ["overload"], # core non-dual-life
     require_nok => ["Foo"],
 );
 
