@@ -8,6 +8,9 @@ use strict;
 use warnings;
 use Config;
 
+# Custom real_path, to make $core_inc and $noncore_inc generation more reliable.
+sub real_path;
+
 # BEGIN snippet from Module::Path::More, with mods/simplification
 my $SEPARATOR;
 BEGIN {
@@ -41,6 +44,7 @@ sub _open_handle {
 
 my $hook;
 my ($orig_inc, $orig_inc_sorted_by_len);
+my @INC_normalized = map real_path($_), @INC; # Normalize the paths in @INC.
 
 sub import {
     my ($class, %opts) = @_;
@@ -70,17 +74,21 @@ sub import {
     }
 
     if ($opts{extra_inc}) {
-        unshift @INC, split(/:/, $opts{extra_inc});
+        unshift @INC_normalized, split(/:/, $opts{extra_inc});
     }
 
     if (!$orig_inc) {
-        $orig_inc = [@INC];
-        $orig_inc_sorted_by_len = [sort {length($b) <=> length($a)} @INC];
+        $orig_inc = [@INC_normalized];
+        $orig_inc_sorted_by_len =
+            [sort {length($b) <=> length($a)} @INC_normalized];
     }
 
-    my $core_inc = [@Config{qw(privlibexp archlibexp)}];
-    my $noncore_inc = [grep {$_ ne $Config{privlibexp} &&
-                                 $_ ne $Config{archlibexp}} @$orig_inc];
+    my ($privlibexp, $archlibexp) =
+        map real_path($_), @Config{qw(privlibexp archlibexp)};
+    
+    my $core_inc = [$privlibexp, $archlibexp];
+    my $noncore_inc = [grep {$_ ne $privlibexp &&
+                                $_ ne $archlibexp} @$orig_inc];
     my %allow;
     if ($opts{allow}) {
         for (split /\s*;\s*/, $opts{allow}) {
@@ -218,6 +226,55 @@ sub import {
     );
     #use DD; dd $orig_inc;
     #use DD; dd \@INC;
+}
+
+
+# Modules needed for custom real_path() sub routine below.
+use File::Spec ();
+use Cwd ();
+
+BEGIN { # Needed so readlink() recognizes NTFS junctions and symlinks on Win32.
+    if ( $^O eq q{MSWin32} ) {
+        require Win32::Symlink && Win32::Symlink->import( 'readlink' );
+    }
+}
+
+# Custom real_path, to make $core_inc and $noncore_inc generation more reliable.
+sub real_path {
+    my $start = @_ ? shift : '.';
+    $start = File::Spec->rel2abs($start)
+        unless File::Spec->file_name_is_absolute($start);
+    
+    my @path = File::Spec->splitdir( $start );
+    pop @path until defined $path[-1] && length $path[-1];
+    
+    my $path = '';
+    my %seen; # For symlink infinite-loop prevention.
+    
+    while (1) { # Loop until no symlinks (or NTFS junctions) are found.
+        my @found;
+        
+        for my $i ( 0 .. $#path ) {
+            my $curr_path = join '/', @path[0 .. $i];
+            
+            # Using readlink intad of an -l test to accomidate Win32/NTFS.
+            if ( my $target = readlink $curr_path ) {
+                $target = join('/', @path[0 .. $i-1], $target)
+                    unless File::Spec->file_name_is_absolute($target);
+                
+                $target = Cwd::abs_path $target;
+                push @found, $target;
+                
+                splice @path, 0, ($i + 1), File::Spec->splitdir($target);
+            }
+        }
+        
+        $path = join '/', @path;
+        last if !@found || exists $seen{$path};
+        $seen{$path}++;
+    }
+    
+    return $path;
 }
 
 sub unimport {
@@ -415,3 +472,4 @@ To simulate the absence of certain programs in PATH, you can try
 L<File::Which::Patch::Hide>.
 
 =cut
+
