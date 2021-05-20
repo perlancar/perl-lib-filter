@@ -1,6 +1,8 @@
 package lib::allow;
 
+# AUTHORITY
 # DATE
+# DIST
 # VERSION
 
 use strict;

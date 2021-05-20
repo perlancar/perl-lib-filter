@@ -1,6 +1,8 @@
 package lib::disallow;
 
+# AUTHORITY
 # DATE
+# DIST
 # VERSION
 
 use strict;

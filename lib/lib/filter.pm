@@ -1,10 +1,12 @@
 package lib::filter;
 
+# AUTHORITY
 # DATE
+# DIST
 # VERSION
 
-# no need to avoid strict & warnings, because Config uses them
-use strict;
+use 5.008009;  # the first version where Module::CoreList becomes core
+use strict;    # no need to avoid strict & warnings, because Config uses them
 use warnings;
 use Config;
 
@@ -413,5 +415,7 @@ L<Test::Without::Module>.
 
 To simulate the absence of certain programs in PATH, you can try
 L<File::Which::Patch::Hide>.
+
+To no-op instead of disallowing, see L<lib::noop>.
 
 =cut

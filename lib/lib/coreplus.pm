@@ -1,6 +1,8 @@
 package lib::coreplus;
 
+# AUTHORITY
 # DATE
+# DIST
 # VERSION
 
 use strict;
