@@ -1,3 +1,10 @@
+0.280   2021-05-20  Released-By: PERLANCAR; Urgency: low
+
+        - No functional changes.
+
+	- [doc] Mention lib::noop.
+
+
 0.27    2016-08-24  Released-By: PERLANCAR
 
 	- No functional changes.

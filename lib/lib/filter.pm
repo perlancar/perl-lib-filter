@@ -254,6 +254,8 @@ module exist, so I'll be presenting those in the examples below.
 
 You can also use L<lib::none> for this, or simply empty C<@INC>.
 
+To no-op instead of disallowing, see L<lib::noop::all>.
+
 =item * To allow only core modules:
 
 For example for testing a fatpacked script (see L<App::FatPacker>):
@@ -266,6 +268,8 @@ distribution.
 =item * To only allow a specific set of modules:
 
  % perl -Mlib::filter=allow_core,0,allow_noncore,0,allow,'XSLoader;List::Util' yourscript.pl
+
+To no-op instead of disallowing, see L<lib::noop::except>.
 
 =item * To allow core modules plus some additional modules:
 
@@ -309,6 +313,8 @@ optional prereq):
 L<Devel::Hide> is another module which you can you for exactly this purpose:
 
  % perl -MDevel::Hide=YAML::XS,JSON::XS yourscript.pl
+
+To no-op instead of disallowing, see L<lib::noop>.
 
 =item * Do custom filtering
 
