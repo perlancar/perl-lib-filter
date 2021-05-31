@@ -252,7 +252,12 @@ module exist, so I'll be presenting those in the examples below.
 
  % perl -Mlib::filter=allow_core,0,allow_noncore,0 yourscript.pl
 
-You can also use L<lib::none> for this, or simply empty C<@INC>.
+You can also use L<lib::none> for this, or simply empty C<@INC> yourself, e.g.:
+
+ {
+     local @INC = ();
+     ...
+ }
 
 To no-op instead of disallowing, see L<lib::noop::all>.
 
@@ -262,8 +267,8 @@ For example for testing a fatpacked script (see L<App::FatPacker>):
 
  % perl -Mlib::filter=allow_noncore,0 yourscript.pl
 
-You can also use L<lib::core::only> for this, which comes with the App-FatPacker
-distribution.
+You can also use L<lib::core::only> for this, which comes with the
+L<App::FatPacker> distribution.
 
 =item * To only allow a specific set of modules:
 
@@ -275,7 +280,7 @@ To no-op instead of disallowing, see L<lib::noop::except>.
 
 For example to test a fatpacked script that might still require some XS modules:
 
-# allow additional modules by pattern
+ # allow additional modules by pattern
  % perl -Mlib::filter=allow_noncore,0,allow_re,'^DateTime::.*' yourscript.pl
 
  # allow additional modules listed in a file
@@ -321,6 +326,7 @@ To no-op instead of disallowing, see L<lib::noop>.
  % perl -Mlib::filter=filter,sub{not/^Foo::/} yourscript.pl
 
 =back
+
 
 =head1 OPTIONS
 
