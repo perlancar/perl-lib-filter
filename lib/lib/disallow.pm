@@ -1,14 +1,17 @@
+## no critic: TestingAndDebugging::RequireUseStrict
 package lib::disallow;
+
+#IFUNBUILT
+use strict;
+use warnings;
+#END IFUNBUILT
+
+require lib::filter;
 
 # AUTHORITY
 # DATE
 # DIST
 # VERSION
-
-use strict;
-use warnings;
-
-require lib::filter;
 
 sub import {
     my $pkg = shift;
