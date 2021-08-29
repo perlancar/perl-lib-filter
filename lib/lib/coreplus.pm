@@ -1,10 +1,7 @@
-## no critic: TestingAndDebugging::RequireUseStrict
 package lib::coreplus;
 
-#IFUNBUILT
 use strict;
 use warnings;
-#END IFUNBUILT
 
 use Module::CoreList;
 use lib::filter ();

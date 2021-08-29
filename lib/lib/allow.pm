@@ -1,10 +1,7 @@
-## no critic: TestingAndDebugging::RequireUseStrict
 package lib::allow;
 
-#IFUNBUILT
 use strict;
 use warnings;
-#END IFUNBUILT
 
 require lib::filter;
 

@@ -1,13 +1,9 @@
-# we don't want to load any modules
-## no critic: TestingAndDebugging::RequireUseStrict
 package lib::filter;
 
-#IFUNBUILT
 #use 5.008009;  # the first version where Module::CoreList becomes core
-use strict;    # no need to avoid strict & warnings, because Config uses them
+use strict 'subs', 'vars'; # no need to avoid strict & warnings, because Config uses them
 use warnings;
 use Config;
-#END IFUNBUILT
 
 # AUTHORITY
 # DATE
@@ -45,8 +41,11 @@ sub _open_handle {
     $fh;
 }
 
+my $handler;
 my $hook;
 my ($orig_inc, $orig_inc_sorted_by_len);
+
+sub lib::filter::INC { goto $handler }
 
 sub import {
     my ($class, %opts) = @_;
@@ -71,7 +70,7 @@ sub import {
 
     if ($opts{filter} && !ref($opts{filter})) {
         # convenience, for when filter is specified from command-line (-M)
-        $opts{filter} = eval $opts{filter};
+        $opts{filter} = eval $opts{filter}; ## no critic: BuiltinFunctions::ProhibitStringyEval
         die "Error in filter code: $@" if $@;
     }
 
@@ -121,7 +120,7 @@ sub import {
         }
     }
 
-    $hook = sub {
+    $handler = sub {
         my ($self, $file) = @_;
 
         my @caller = caller(0);
@@ -206,6 +205,7 @@ sub import {
         $INC{$file} = $path;
         return _open_handle($path);
     };
+    $hook = bless(sub{"dummy"}, __PACKAGE__);
 
     @INC = (
         $hook,
