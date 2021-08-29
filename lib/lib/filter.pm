@@ -1,14 +1,18 @@
+# we don't want to load any modules
+## no critic: TestingAndDebugging::RequireUseStrict
 package lib::filter;
+
+#IFUNBUILT
+#use 5.008009;  # the first version where Module::CoreList becomes core
+use strict;    # no need to avoid strict & warnings, because Config uses them
+use warnings;
+use Config;
+#END IFUNBUILT
 
 # AUTHORITY
 # DATE
 # DIST
 # VERSION
-
-use 5.008009;  # the first version where Module::CoreList becomes core
-use strict;    # no need to avoid strict & warnings, because Config uses them
-use warnings;
-use Config;
 
 # BEGIN snippet from Module::Path::More, with mods/simplification
 my $SEPARATOR;
