@@ -65,6 +65,8 @@ sub import {
                     )\z/x;
     }
 
+    $opts{debug} = $ENV{PERL_LIB_FILTER_DEBUG} unless defined($opts{debug});
+
     $opts{allow_core}    = 1 if !defined($opts{allow_core});
     $opts{allow_noncore} = 1 if !defined($opts{allow_noncore});
 
@@ -422,6 +424,13 @@ When C<allow_core> is set to false, core directories are excluded. Likewise,
 when C<allow_noncore> is set to false, non-core directories are excluded.
 
 =back
+
+
+=head1 ENVIRONMENT
+
+=head2 PERL_LIB_FILTER_DEBUG
+
+Boolean. Sets the default for the C<debug> option.
 
 
 =head1 SEE ALSO
